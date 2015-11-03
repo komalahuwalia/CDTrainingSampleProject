@@ -15,12 +15,14 @@ import static org.hamcrest.core.Is.is;
 public class BankIntegrationTest {
   private Bank bank;
   private Person personOne;
+  private Person personTwo;
 
   @Before
   public void setUp() throws Exception {
     flushDatabase();
     bank = new Bank();
     personOne = new Person(1, "First User");
+    personTwo = new Person(2, "Second User");
   }
 
   @Test
@@ -37,6 +39,66 @@ public class BankIntegrationTest {
     assertThat(savedAccount.owner.id, is(personOne.id));
     assertThat(savedAccount.id, is(1L));
     assertThat(savedAccount.balance, is(70.0));
+  }
+
+  @Test
+  public void shouldFailWithrawWhenNotSufficientBalance() throws Exception {
+    //Given
+    Account account = bank.createAccount(personOne);
+
+    //When
+    bank.deposit(10.0, account);
+    boolean status = bank.withdraw(30.0, account);
+
+    //Then
+    assertThat(status, is(false));
+    assertThat(bank.account(account.id).balance, is(10.0));
+  }
+
+  @Test
+  public void shouldBeAbleToTransferAmount() throws Exception {
+    //Given
+    Account from = bank.createAccount(personOne);
+    Account to = bank.createAccount(personTwo);
+
+    //When
+    bank.deposit(100.0, from);
+    boolean status = bank.transfer(30.0, from, to);
+
+    //Then
+    assertThat(status, is(true));
+    assertThat(bank.account(from.id).balance, is(70.0));
+    assertThat(bank.account(to.id).balance, is(30.0));
+  }
+
+  @Test
+  public void shouldFailTransferIfFromAccountDoesNotHaveEnoughBalance() throws Exception {
+    //Given
+    Account from = bank.createAccount(personOne);
+    Account to = bank.createAccount(personTwo);
+
+    //When
+    bank.deposit(10.0, from);
+    boolean status = bank.transfer(30.0, from, to);
+
+    //Then
+    assertThat(status, is(false));
+    assertThat(bank.account(from.id).balance, is(10.0));
+    assertThat(bank.account(to.id).balance, is(0.0));
+  }
+
+  @Test
+  public void shouldHandleTransferFailure() throws Exception {
+    //Given
+    Account from = bank.createAccount(personOne);
+
+    //When
+    bank.deposit(100.0, from);
+    boolean status = bank.transfer(30.0, from, null);
+
+    //Then
+    assertThat(status, is(false));
+    assertThat(bank.account(from.id).balance, is(100.0));
   }
 
   private String flushDatabase() {

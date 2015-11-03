@@ -6,7 +6,6 @@ import training.cd.repository.Database;
 import training.cd.repository.RedisDatabase;
 
 public class Bank {
-  public static final String MAX_ID = "maxId";
 
   public Account createAccount(Person person) {
     if (person == null) throw new RuntimeException("Person cannot be null");
@@ -28,12 +27,25 @@ public class Bank {
     new RedisDatabase().update(account);
   }
 
-  public void withdraw(double amount, Account account) {
+  public boolean withdraw(double amount, Account account) {
+    if (account.balance < amount) return false;
+
     account.balance -= amount;
     new RedisDatabase().update(account);
+
+    return true;
   }
 
-  public void transfer(double amount, Account from, Account to) {
+  public boolean transfer(double amount, Account from, Account to) {
+    boolean status = withdraw(amount, from);
+    if (!status) return false;
 
+    try {
+      deposit(amount, to);
+    } catch (Exception e) {
+      deposit(amount, from);
+      return false;
+    }
+    return true;
   }
 }
