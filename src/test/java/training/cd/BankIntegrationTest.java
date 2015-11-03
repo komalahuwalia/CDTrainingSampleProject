@@ -42,20 +42,6 @@ public class BankIntegrationTest {
   }
 
   @Test
-  public void shouldFailWithrawWhenNotSufficientBalance() throws Exception {
-    //Given
-    Account account = bank.createAccount(personOne);
-
-    //When
-    bank.deposit(10.0, account);
-    boolean status = bank.withdraw(30.0, account);
-
-    //Then
-    assertThat(status, is(false));
-    assertThat(bank.account(account.id).balance, is(10.0));
-  }
-
-  @Test
   public void shouldBeAbleToTransferAmount() throws Exception {
     //Given
     Account from = bank.createAccount(personOne);
@@ -85,20 +71,6 @@ public class BankIntegrationTest {
     assertThat(status, is(false));
     assertThat(bank.account(from.id).balance, is(10.0));
     assertThat(bank.account(to.id).balance, is(0.0));
-  }
-
-  @Test
-  public void shouldHandleTransferFailure() throws Exception {
-    //Given
-    Account from = bank.createAccount(personOne);
-
-    //When
-    bank.deposit(100.0, from);
-    boolean status = bank.transfer(30.0, from, null);
-
-    //Then
-    assertThat(status, is(false));
-    assertThat(bank.account(from.id).balance, is(100.0));
   }
 
   private String flushDatabase() {
