@@ -1,1 +1,1 @@
-mvn clean test-compile failsafe:integration-test
+mvn clean test-compile verify failsafe:integration-test
