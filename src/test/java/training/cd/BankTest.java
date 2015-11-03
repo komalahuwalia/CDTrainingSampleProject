@@ -48,4 +48,12 @@ public class BankTest {
 
     assertThat(savedAccount.id, is(account.id));
   }
+
+  @Test
+  public void shouldDepositAmount() throws Exception {
+    Account account = bank.createAccount(personOne);
+    bank.deposit(10.0, account);
+
+    assertThat(database.account(account.id).balance, is(10.0));
+  }
 }
