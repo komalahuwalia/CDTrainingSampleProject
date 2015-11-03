@@ -78,4 +78,40 @@ public class BankTest {
     assertThat(status, is(false));
     assertThat(database.account(account.id).balance, is(0.0));
   }
+
+  @Test
+  public void shouldTransferAmount() throws Exception {
+    Account from = bank.createAccount(personOne);
+    Account to = bank.createAccount(new Person(2, "Some Other User"));
+    bank.deposit(10.0, from);
+
+    boolean status = bank.transfer(10.0, from, to);
+
+    assertThat(status, is(true));
+    assertThat(database.account(from.id).balance, is(0.0));
+    assertThat(database.account(to.id).balance, is(10.0));
+  }
+
+  @Test
+  public void shouldFailTransferWhenFromAccountDoesNotHaveEnoughBalance() throws Exception {
+    Account from = bank.createAccount(personOne);
+    Account to = bank.createAccount(new Person(2, "Some Other User"));
+
+    boolean status = bank.transfer(10.0, from, to);
+
+    assertThat(status, is(false));
+    assertThat(database.account(from.id).balance, is(0.0));
+    assertThat(database.account(to.id).balance, is(0.0));
+  }
+
+  @Test
+  public void shouldFailTransferWhenToAccountIsInvalid() throws Exception {
+    Account from = bank.createAccount(personOne);
+    bank.deposit(10.0, from);
+
+    boolean status = bank.transfer(10.0, from, null);
+
+    assertThat(status, is(false));
+    assertThat(database.account(from.id).balance, is(10.0));
+  }
 }
