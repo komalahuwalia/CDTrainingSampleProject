@@ -52,8 +52,30 @@ public class BankTest {
   @Test
   public void shouldDepositAmount() throws Exception {
     Account account = bank.createAccount(personOne);
+
     bank.deposit(10.0, account);
 
     assertThat(database.account(account.id).balance, is(10.0));
+  }
+
+  @Test
+  public void shouldWithdrawAmount() throws Exception {
+    Account account = bank.createAccount(personOne);
+    bank.deposit(10.0, account);
+
+    boolean status = bank.withdraw(10.0, account);
+
+    assertThat(status, is(true));
+    assertThat(database.account(account.id).balance, is(0.0));
+  }
+
+  @Test
+  public void withdrawShouldFailIfBalanceIsNotEnough() throws Exception {
+    Account account = bank.createAccount(personOne);
+
+    boolean status = bank.withdraw(10.0, account);
+
+    assertThat(status, is(false));
+    assertThat(database.account(account.id).balance, is(0.0));
   }
 }
