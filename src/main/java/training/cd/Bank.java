@@ -31,7 +31,7 @@ public class Bank {
   }
 
   public Account account(long id) {
-    return new RedisDatabase().account(id);
+    return database.account(id);
   }
 
   public void deposit(double amount, Account account) {
