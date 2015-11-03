@@ -37,5 +37,6 @@ public class BankTest {
     Account account = bank.createAccount(person);
 
     assertThat(account.owner.id, is(1L));
+    assertThat(account.balance, is(0.0));
   }
 }
