@@ -1,5 +1,6 @@
 package training.cd;
 
+import training.cd.infrastructure.Logger;
 import training.cd.model.Account;
 import training.cd.model.Person;
 import training.cd.repository.Database;
@@ -15,6 +16,8 @@ public class Bank {
     Account account = new Account(0.0, person);
     database.create(account);
 
+    new Logger().debug(String.format("account created with id: %d", account.id));
+
     return account;
   }
 
@@ -24,6 +27,9 @@ public class Bank {
 
   public void deposit(double amount, Account account) {
     account.balance += amount;
+
+    new Logger().debug(String.format("deposited %s to %d", amount, account.id));
+
     new RedisDatabase().update(account);
   }
 
@@ -32,6 +38,8 @@ public class Bank {
 
     account.balance -= amount;
     new RedisDatabase().update(account);
+
+    new Logger().debug(String.format("withdrew %s from %d", amount, account.id));
 
     return true;
   }
@@ -46,6 +54,9 @@ public class Bank {
       deposit(amount, from);
       return false;
     }
+
+    new Logger().debug(String.format("transferred %s from %d to %d", amount, from.id, to.id));
+
     return true;
   }
 }
