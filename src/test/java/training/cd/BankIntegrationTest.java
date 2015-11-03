@@ -2,13 +2,16 @@ package training.cd;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import redis.clients.jedis.Jedis;
 import training.cd.model.Account;
 import training.cd.model.Person;
+import training.cd.type.IntegrationTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
+@Category(IntegrationTest.class)
 public class BankIntegrationTest {
   private Bank bank;
   private Person personOne;
