@@ -18,12 +18,14 @@ public class BankTest {
   private Logger logger;
 
   private TestDatabase database;
+  private Person personOne;
   private Bank bank;
 
   @Before
   public void setUp() throws Exception {
     database = new TestDatabase();
     bank = new Bank(database, logger);
+    personOne = new Person(1, "Some User");
   }
 
   @Test(expected = RuntimeException.class)
@@ -33,10 +35,17 @@ public class BankTest {
 
   @Test
   public void shouldCreateAccount() throws Exception {
-    Person person = new Person(1, "Some User");
-    Account account = bank.createAccount(person);
+    Account account = bank.createAccount(personOne);
 
     assertThat(account.owner.id, is(1L));
     assertThat(account.balance, is(0.0));
+  }
+
+  @Test
+  public void shouldFetchAccountFromId() throws Exception {
+    Account account = bank.createAccount(personOne);
+    Account savedAccount = bank.account(account.id);
+
+    assertThat(savedAccount.id, is(account.id));
   }
 }
