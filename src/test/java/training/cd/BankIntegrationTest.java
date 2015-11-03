@@ -24,18 +24,19 @@ public class BankIntegrationTest {
   }
 
   @Test
-  public void shouldBeAbleToCreateAccountAndAddBalance() throws Exception {
+  public void shouldBeAbleToCreateAccountDepositAndWithdraw() throws Exception {
     //Given
     Account account = bank.createAccount(personOne);
-    bank.deposit(100.0, account);
 
     //When
-    Account savedAccount = bank.account(account.id);
+    bank.deposit(100.0, account);
+    bank.withdraw(30.0, account);
 
     //Then
+    Account savedAccount = bank.account(account.id);
     assertThat(savedAccount.owner.id, is(personOne.id));
     assertThat(savedAccount.id, is(1L));
-    assertThat(savedAccount.balance, is(100.0));
+    assertThat(savedAccount.balance, is(70.0));
   }
 
   private String flushDatabase() {

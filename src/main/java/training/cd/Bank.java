@@ -28,11 +28,12 @@ public class Bank {
     new RedisDatabase().update(account);
   }
 
-  public boolean withdraw(double amount, Account account) {
-    return false;
+  public void withdraw(double amount, Account account) {
+    account.balance -= amount;
+    new RedisDatabase().update(account);
   }
 
-  public boolean transfer(double amount, Account from, Account to) {
-    return false;
+  public void transfer(double amount, Account from, Account to) {
+
   }
 }
